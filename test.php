@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Use tests in folder tests
+ */
 require_once("./lib/PhpBuf.php");
 require_once("./lib/Message/Example.php");
 require_once("./lib/Message/ExampleRepeat.php");
@@ -111,19 +113,6 @@ echo "isAdmin: true\n";
 echo "status: " . $message->status . "\n";
 echo "name: " . $message->name . "\n";
 
-/*
-$messageTest1 = new Message_Example_Test1();
-$messageTest1->a = 150;
-$message = new Message_Example_Test3();
-$message->c = $messageTest1;
-$writer = new IO_Writer();
-$message->write($writer);
-    	
-$reader = IO_Reader::createFromWriter($writer);
-$message = new Message_Example_Test3();
-$message->read($reader);
-		
-print_r($message);*/
 
 $messagesArray = array();
 $main = new Message_ExampleRepeat();
@@ -146,14 +135,3 @@ $main = new Message_ExampleRepeat();
 $main->read($reader);
 
 print_r($main);
-
-
-/*$str1 = "11100001";
-/*$str1 = "11100001";
-$num1 = bindec(strrev($str1));
-
-$num2 = $num1 >> 1;
-
-$str2 = strrev(sprintf("%b", $num2));
-echo $str1 . "\n";
-echo $str2;*/

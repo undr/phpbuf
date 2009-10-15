@@ -1,0 +1,42 @@
+There are no generators of a code. You self should create classes of messages. 
+
+The detailed description memo.undr.su (Inside Russian)
+
+Example of usage of library:
+
+<?php
+class Message_Example extends Message_Abstract {
+    public function __construct() {
+        $this->setField("id", Type::INT, Rule::REQUIRED, 1);
+        $this->setField("balance", Type::SINT, Rule::REQUIRED, 2);
+        $this->setField("isAdmin", Type::BOOL, Rule::REQUIRED, 3);
+        $this->setField("status", Type::ENUM, Rule::REQUIRED, 4, array("active", "inactive", "deleted"));
+        $this->setField("name", Type::STRING, Rule::REQUIRED, 5);
+        $this->setField("bytes", Type::BYTES, Rule::REQUIRED, 6);
+    }
+}
+
+require_once("/phpbuf/lib/PhpBuf.php");
+
+$message = new Message_Example();
+$writer = new IO_Writer();
+$message->id = 150;
+$message->balance = -12345;
+$message->isAdmin = true;
+$message->status = "deleted";
+$message->name = "Andrey Lepeshkin";
+$message->bytes = "Some bytes";
+$message->write($writer);
+                
+$reader = IO_Reader::createFromWriter($writer);
+$message = new Message_Example();
+$message->read($reader);
+                
+$this->assertEquals(150, $message->id);
+$this->assertEquals(-12345, $message->balance);         
+$this->assertTrue($message->isAdmin);
+$this->assertEquals("deleted", $message->status);               
+$this->assertEquals("Andrey Lepeshkin", $message->name);                
+$this->assertEquals("Some bytes", $message->bytes);  
+
+?>
