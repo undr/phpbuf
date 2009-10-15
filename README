@@ -1,6 +1,6 @@
 There are no generators of a code. You self should create classes of messages. 
 
-The detailed description memo.undr.su (Inside Russian)
+The detailed description http://memo.undr.su/2009/10/15/realizaciya-google-protocol-buffers-na-php/ (Inside Russian)
 
 Example of usage of library:
 
@@ -27,14 +27,14 @@ php code:
  * Class of message
  *
  */
-class Message_Example extends Message_Abstract {
+class Message_Example extends PhpBuf_Message_Abstract {
     public function __construct() {
-        $this->setField("id", Type::INT, Rule::REQUIRED, 1);
-        $this->setField("balance", Type::SINT, Rule::REQUIRED, 2);
-        $this->setField("isAdmin", Type::BOOL, Rule::REQUIRED, 3);
-        $this->setField("status", Type::ENUM, Rule::REQUIRED, 4, array("active", "inactive", "deleted"));
-        $this->setField("name", Type::STRING, Rule::REQUIRED, 5);
-        $this->setField("bytes", Type::BYTES, Rule::REQUIRED, 6);
+        $this->setField("id", PhpBuf_Type::INT, PhpBuf_Rule::REQUIRED, 1);
+        $this->setField("balance", PhpBuf_Type::SINT, PhpBuf_Rule::REQUIRED, 2);
+        $this->setField("isAdmin", PhpBuf_Type::BOOL, PhpBuf_Rule::REQUIRED, 3);
+        $this->setField("status", PhpBuf_Type::ENUM, PhpBuf_Rule::REQUIRED, 4, array("active", "inactive", "deleted"));
+        $this->setField("name", PhpBuf_Type::STRING, PhpBuf_Rule::REQUIRED, 5);
+        $this->setField("bytes", PhpBuf_Type::BYTES, PhpBuf_Rule::REQUIRED, 6);
     }
 }
 
@@ -44,7 +44,7 @@ class Message_Example extends Message_Abstract {
 require_once("/phpbuf/lib/PhpBuf.php");
 
 $message = new Message_Example();
-$writer = new IO_Writer();
+$writer = new PhpBuf_IO_Writer();
 $message->id = 150;
 $message->balance = -12345;
 $message->isAdmin = true;
@@ -53,7 +53,7 @@ $message->name = "Andrey Lepeshkin";
 $message->bytes = "Some bytes";
 $message->write($writer);
                 
-$reader = IO_Reader::createFromWriter($writer);
+$reader = PhpBuf_IO_Reader::createFromWriter($writer);
 $message = new Message_Example();
 $message->read($reader);
                 
