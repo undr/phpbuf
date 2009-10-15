@@ -1,6 +1,6 @@
 <?php
-require_once(ROOT. "/lib/Message/Example.php");
-require_once(ROOT. "/lib/Message/ExampleRepeat.php");
+require_once(ROOT. "/lib/PhpBuf/Message/Example.php");
+require_once(ROOT. "/lib/PhpBuf/Message/ExampleRepeat.php");
 class PhpBuf_RepeatedMessageTest extends PHPUnit_Framework_TestCase {
 	public function testMessageWriterReader() {
 		$messagesArray = array();

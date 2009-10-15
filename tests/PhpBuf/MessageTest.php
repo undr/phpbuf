@@ -1,8 +1,8 @@
 <?php
-require_once(ROOT. "/lib/Message/Example.php");
-require_once(ROOT. "/lib/Message/Example/Test1.php");
-require_once(ROOT. "/lib/Message/Example/Test2.php");
-require_once(ROOT. "/lib/Message/Example/Test3.php");
+require_once(ROOT. "/lib/PhpBuf/Message/Example.php");
+require_once(ROOT. "/lib/PhpBuf/Message/Example/Test1.php");
+require_once(ROOT. "/lib/PhpBuf/Message/Example/Test2.php");
+require_once(ROOT. "/lib/PhpBuf/Message/Example/Test3.php");
 class PhpBuf_MessageTest extends PHPUnit_Framework_TestCase {
 	public function testMessageWriterReader() {
         $message = new Message_Example();
