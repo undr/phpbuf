@@ -4,7 +4,7 @@
  * @link http://code.google.com/p/php-protobuf/
  *
  */
-class Base128 {
+class PhpBuf_Base128 {
 
 	private function __construct() {}
 	/**
@@ -14,7 +14,7 @@ class Base128 {
 	 * @return string
 	 */
 	public static function encode($value) {
-		if(!is_integer($value) || $value < 0) { throw new Base128_Exception("value mast be unsigned integer");}
+		if(!is_integer($value) || $value < 0) { throw new PhpBuf_Base128_Exception("value mast be unsigned integer");}
 		if($value <= 127) {
 			return chr($value);
 		}
@@ -38,28 +38,27 @@ class Base128 {
 	}
 	
 	/**
-	 * Encode value and write to IWriter
+	 * Encode value and write to PhpBuf_IO_Writer_Interface
 	 *
-	 * @param IWriter $writer
+	 * @param PhpBuf_IO_Writer_Interface $writer
 	 */
-	public static function encodeToWriter(IO_Writer_Interface $writer, $value) {
+	public static function encodeToWriter(PhpBuf_IO_Writer_Interface $writer, $value) {
 		$writer->writeBytes(self::encode($value));
 	}
 	
 	/**
-	 * Decode varint encoded string from IReader
+	 * Decode varint encoded string from PhpBuf_IO_Writer_Interface
 	 *
-	 * @param string $value
+	 * @param PhpBuf_IO_Reader_Interface $value
 	 * @return integer
 	 */
-	public static function decodeFromReader(IO_Reader_Interface $reader) {
+	public static function decodeFromReader(PhpBuf_IO_Reader_Interface $reader) {
 		$continue = true;
 		$result = "";
 		while ($continue) {
 			$byte = unpack("C", $reader->getByte());
 			$bin = sprintf("%b", $byte[1]);
 			if(strlen($bin) < 8) { $continue = false; }
-			//if(!string && $continue) { throw new Base128_Exception("expecting next byte"); }
 			$bin = str_pad($bin, 8, "0", STR_PAD_LEFT);
 			$bin7bit = substr($bin, 1, 7);
 			$result = $bin7bit . $result;

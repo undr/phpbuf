@@ -5,10 +5,10 @@ class PhpBuf_RepeatedMessageTest extends PHPUnit_Framework_TestCase {
 	public function testMessageWriterReader() {
 		$messagesArray = array();
 		$namesArray = array();
-		$main = new Message_ExampleRepeat();
-		$writer = new IO_Writer();
+		$main = new PhpBuf_Message_ExampleRepeat();
+		$writer = new PhpBuf_IO_Writer();
 		for ($i = 0; $i < 5; $i++) {
-			$nested = new Message_Example();
+			$nested = new PhpBuf_Message_Example();
 			$nested->id = $i;
 			$nested->balance = -12345 + ($i * 10);
 			$nested->isAdmin = false;
@@ -24,8 +24,8 @@ class PhpBuf_RepeatedMessageTest extends PHPUnit_Framework_TestCase {
         $main->name = $namesArray;
 		$main->write($writer);
 		
-		$reader = IO_Reader::createFromWriter($writer);
-		$main = new Message_ExampleRepeat();
+		$reader = PhpBuf_IO_Reader::createFromWriter($writer);
+		$main = new PhpBuf_Message_ExampleRepeat();
 		$main->read($reader);
 		/**
 		 * Проверка

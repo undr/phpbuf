@@ -12,7 +12,7 @@ require_once("PhpBuf/NotImplemented/Exception.php");
 require_once("PhpBuf/Rule.php");
 
 require_once("PhpBuf/IO/Reader/Interface.php");
-require_once("PhpBuf/PhpBuf/IO/Writer/Interface.php");
+require_once("PhpBuf/IO/Writer/Interface.php");
 require_once("PhpBuf/IO/Exception.php");
 require_once("PhpBuf/IO/Reader.php");
 require_once("PhpBuf/IO/Writer.php");

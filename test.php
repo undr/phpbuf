@@ -9,50 +9,50 @@ require_once("./lib/PhpBuf/Message/Example/Test1.php");
 require_once("./lib/PhpBuf/Message/Example/Test3.php");
 
 echo "Test values less than 128 (encode/decode)\n";
-$result = Base128::decodeFromReader(new IO_Reader(Base128::encode(120)));
+$result = PhpBuf_Base128::decodeFromReader(new PhpBuf_IO_Reader(PhpBuf_Base128::encode(120)));
 echo "120 == " . $result ."\n\n"; 
 echo "Test values more than 128 (only decode)\n";
-$result = Base128::decodeFromReader(new IO_Reader(pack("n", 44034)));
+$result = PhpBuf_Base128::decodeFromReader(new PhpBuf_IO_Reader(pack("n", 44034)));
 echo "300 == " . $result ."\n\n"; 
 echo "Test values more than 128 (encode/decode)\n";
-$encode = Base128::encode(300);
-$result = Base128::decodeFromReader(new IO_Reader($encode));
+$encode = PhpBuf_Base128::encode(300);
+$result = PhpBuf_Base128::decodeFromReader(new PhpBuf_IO_Reader($encode));
 echo "encoded: $encode\n\n";
 echo "300 == " . $result ."\n\n"; 
 echo "Test values more than 128 (encode/decode)\n";
-$encode = /*pack("n", 8891723);*/Base128::encode(123456789);
-$result = Base128::decodeFromReader(new IO_Reader($encode));
+$encode = /*pack("n", 8891723);*/PhpBuf_Base128::encode(123456789);
+$result = PhpBuf_Base128::decodeFromReader(new PhpBuf_IO_Reader($encode));
 echo "encoded: $encode\n\n";
 echo "123456789 == " . $result ."\n\n"; 
 echo "Test ZigZag class\n";
 echo "value: 0\n";
-$encode = ZigZag::encode(0);
+$encode = PhpBuf_ZigZag::encode(0);
 echo "encoded: ". $encode ."\n";
-echo "decoded: " . ZigZag::decode($encode) . "\n\n";
+echo "decoded: " . PhpBuf_ZigZag::decode($encode) . "\n\n";
 
 echo "value: 1\n";
-$encode = ZigZag::encode(1);
+$encode = PhpBuf_ZigZag::encode(1);
 echo "encoded: ". $encode ."\n";
-echo "decoded: " . ZigZag::decode($encode) . "\n\n";
+echo "decoded: " . PhpBuf_ZigZag::decode($encode) . "\n\n";
 
 echo "value: -1\n";
-$encode = ZigZag::encode(-1);
+$encode = PhpBuf_ZigZag::encode(-1);
 echo "encoded: ". $encode ."\n";
-echo "decoded: " . ZigZag::decode($encode) . "\n\n";
+echo "decoded: " . PhpBuf_ZigZag::decode($encode) . "\n\n";
 
 echo "value: 123456789\n";
-$encode = ZigZag::encode(123456789);
+$encode = PhpBuf_ZigZag::encode(123456789);
 echo "encoded: ". $encode ."\n";
-echo "decoded: " . ZigZag::decode($encode) . "\n\n";
+echo "decoded: " . PhpBuf_ZigZag::decode($encode) . "\n\n";
 
 echo "value: -123456789\n";
-$encode = ZigZag::encode(-123456789);
+$encode = PhpBuf_ZigZag::encode(-123456789);
 echo "encoded: ". $encode ."\n";
-echo "decoded: " . ZigZag::decode($encode) . "\n\n";
+echo "decoded: " . PhpBuf_ZigZag::decode($encode) . "\n\n";
 
 echo "Test Reader & Writer\n";
 
-$writer = new IO_Writer();
+$writer = new PhpBuf_IO_Writer();
 
 $writer->writeBytes("test1");
 echo "lenght: ". $writer->getLenght() ."\n";
@@ -73,7 +73,7 @@ $writer->writeBytes(" StringForReaders");
 echo "lenght: ". $writer->getLenght() ."\n";
 echo "test1 StringForReaders = ". $writer->getData() ."\n";
 
-$reader = IO_Reader::createFromWriter($writer);
+$reader = PhpBuf_IO_Reader::createFromWriter($writer);
 echo "t = ". $reader->getByte() ."\n";
 echo "position: " .$reader->getPosition() . "\n";
 echo "e = ". $reader->getByte() ."\n";
@@ -88,9 +88,9 @@ echo "For = ". $reader->getBytes(3) ."\n";
 echo "position: " .$reader->getPosition() . "\n";
 
 echo "Test Messages\n";
-$message = new Message_Example();
+$message = new PhpBuf_Message_Example();
 
-$writer = new IO_Writer();
+$writer = new PhpBuf_IO_Writer();
 $message->id = 150;
 $message->balance = -12345;
 $message->isAdmin = true;
@@ -102,8 +102,8 @@ echo $writer->getData() . "\n";
 foreach (str_split($writer->getData()) as $byte) {
 	echo ord($byte) . "\n";
 }
-$reader = IO_Reader::createFromWriter($writer);
-$message = new Message_Example();
+$reader = PhpBuf_IO_Reader::createFromWriter($writer);
+$message = new PhpBuf_Message_Example();
 $message->read($reader);
 echo "id: " . $message->id . "\n";
 echo "balance: " . $message->balance . "\n";
@@ -115,10 +115,10 @@ echo "name: " . $message->name . "\n";
 
 
 $messagesArray = array();
-$main = new Message_ExampleRepeat();
-$writer = new IO_Writer();
+$main = new PhpBuf_Message_ExampleRepeat();
+$writer = new PhpBuf_IO_Writer();
 for ($i = 0; $i < 5; $i++) {
-	$nested = new Message_Example();
+	$nested = new PhpBuf_Message_Example();
 	$nested->id = $i;
 	$nested->balance = -12345 + ($i * 10);
 	$nested->isAdmin = false;
@@ -130,8 +130,8 @@ for ($i = 0; $i < 5; $i++) {
 $main->messages = $messagesArray;
 $main->write($writer);
 		
-$reader = IO_Reader::createFromWriter($writer);
-$main = new Message_ExampleRepeat();
+$reader = PhpBuf_IO_Reader::createFromWriter($writer);
+$main = new PhpBuf_Message_ExampleRepeat();
 $main->read($reader);
 
 print_r($main);

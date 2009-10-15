@@ -1,7 +1,7 @@
 <?php
 class PhpBuf_ReaderWriterTest extends PHPUnit_Framework_TestCase {
 	public function testWriteBytes() {
-        $writer = new IO_Writer();
+        $writer = new PhpBuf_IO_Writer();
         $writer->writeBytes("Test");
         $this->assertEquals(4, $writer->getLenght(), "Lenght failure");
         $this->assertEquals("Test", $writer->getData(), "Data failure");
@@ -10,13 +10,13 @@ class PhpBuf_ReaderWriterTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("Test Test", $writer->getData(), "Data failure");
     }
 	public function testWriteByteWithLenghtMoreThan1() {
-		$this->setExpectedException('IO_Exception');
-		$writer = new IO_Writer();
+		$this->setExpectedException('PhpBuf_IO_Exception');
+		$writer = new PhpBuf_IO_Writer();
         $writer->writeByte("Test");
 
 	}
 	public function testWriteByte() {
-		$writer = new IO_Writer();
+		$writer = new PhpBuf_IO_Writer();
         $writer->writeByte("T");
         $this->assertEquals(1, $writer->getLenght(), "Lenght failure: " . $writer->getLenght() . ", " . $writer->getData());
         $this->assertEquals("T", $writer->getData(), "Data failure: " . $writer->getData());
@@ -25,7 +25,7 @@ class PhpBuf_ReaderWriterTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("Te", $writer->getData(), "Data failure: " . $writer->getData());
 	}
 	public function testWriterRedo() {
-		$writer = new IO_Writer();
+		$writer = new PhpBuf_IO_Writer();
         $writer->writeBytes("One");
         $writer->writeBytes("Two");
         $writer->writeBytes("Three");
@@ -38,7 +38,7 @@ class PhpBuf_ReaderWriterTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	public function testReaderGet() {
-		$reader = new IO_Reader("String for test");
+		$reader = new PhpBuf_IO_Reader("String for test");
 		$this->assertEquals("S", $reader->getByte());
 		$this->assertEquals(1, $reader->getPosition());
 		$this->assertEquals("t", $reader->getByte());

@@ -10,7 +10,7 @@ require_once ROOT . '/tests/PhpBuf/RepeatedMessageTest.php';
 
 class AllTests {
     public static function suite() {
-        $suite = new PHPUnit_Framework_TestSuite('ProtoBuf'); 
+        $suite = new PHPUnit_Framework_TestSuite('PhpBuf'); 
         $suite->addTestSuite('PhpBuf_Base128Test');
         $suite->addTestSuite('PhpBuf_ZigZagTest');
         $suite->addTestSuite('PhpBuf_ReaderWriterTest');
