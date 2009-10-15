@@ -4,7 +4,29 @@ The detailed description memo.undr.su (Inside Russian)
 
 Example of usage of library:
 
+protobufer file:
+
+message Message_Example {
+    required int32 id = 1;
+    required sint32 balance = 2;
+    required bool isAdmin = 3;
+    enum Status {
+    	active = 0;
+    	inactive = 1;
+    	deleted = 2;
+    }
+    required enum Status status = 4;
+    required string name = 5;
+    required bytes bytes = 6;
+}
+
+php code:
+
 <?php
+/**
+ * Class of message
+ *
+ */
 class Message_Example extends Message_Abstract {
     public function __construct() {
         $this->setField("id", Type::INT, Rule::REQUIRED, 1);
@@ -16,6 +38,9 @@ class Message_Example extends Message_Abstract {
     }
 }
 
+/**
+ * Work with message
+ */
 require_once("/phpbuf/lib/PhpBuf.php");
 
 $message = new Message_Example();
