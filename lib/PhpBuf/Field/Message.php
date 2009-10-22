@@ -19,7 +19,8 @@ class PhpBuf_Field_Message extends PhpBuf_Field_Abstract {
 		$this->writeWireTypeData($writer, $newWriter->getData());
 	}
 	protected function checkTypeOfValueImpl($value) {
-		return is_a($value, $this->extra);
+		$class = new ReflectionClass($this->extra); 
+		return $class->isInstance($value);
 	}
 }
 ?>
