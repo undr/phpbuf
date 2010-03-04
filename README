@@ -65,3 +65,61 @@ $this->assertEquals("Andrey Lepeshkin", $message->name);
 $this->assertEquals("Some bytes", $message->bytes);  
 
 ?>
+
+RPC call
+----
+
+package com.example.protobuf;
+
+message Request {
+    message Hoge {
+        required string value = 1;
+    }
+}
+message Response {
+    message Foo {
+        repeated string values = 1;
+    }
+}
+
+service MyService {
+    rpc sayHello(Request.Hoge) returns(Response.Foo);
+}
+
+php code:
+
+<?php
+
+class Request_Hoge extends PhpBuf_Message_Abstract {
+    public function __construct(){
+        $this->setField('value', PhpBuf_Type::STRING, PhpBuf_Rule::REQUIRED, 1);
+    }
+    public static function name(){
+        return __CLASS__;
+    }
+}
+class Response_Foo extends PhpBuf_Message_Abstract {
+    public function __construct(){
+        $this->setField('values', PhpBuf_Type::STRING, PhpBuf_Rule::REPEATED, 1);
+    }
+    public static function name(){
+        return __CLASS__;
+    }
+}
+
+class MyService extends PhpBuf_RPC_Socket_Service_Client {
+    protected function getServiceFullQualifiedName(){
+        return 'com.example.protobuf.MyService';
+    }
+    public function sayHello(Request_Hoge $request){
+        return $this->call(__FUNCTION__, $request, Response_Foo::name());
+    }
+}
+
+$request = new Request_Hoge;
+$request->value = 'hello world';
+
+$service = new MyService('127.0.0.1', 12345);
+$response = $service->sayHello($request);
+
+?>
