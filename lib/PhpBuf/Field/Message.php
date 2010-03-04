@@ -5,22 +5,53 @@
  *
  */
 class PhpBuf_Field_Message extends PhpBuf_Field_Abstract {
-	protected $wireType = PhpBuf_Field_Abstract::WIRETYPE_LENGTH_DELIMITED;
-
-	protected function readImpl(PhpBuf_IO_Reader_Interface $reader) {
-		$message = new $this->extra;
-		$bytes = $this->readWireTypeData($reader);
-		$message->read(new PhpBuf_IO_Reader($bytes));
-		return $message;
-	}
-	protected function writeImpl(PhpBuf_IO_Writer_Interface $writer, $value) {
-		$newWriter = new PhpBuf_IO_Writer();
-		$value->write($newWriter);
-		$this->writeWireTypeData($writer, $newWriter->getData());
-	}
-	protected function checkTypeOfValueImpl($value) {
-		$class = new ReflectionClass($this->extra); 
-		return $class->isInstance($value);
-	}
+    protected static $reflectObjectCache = array();
+    
+    protected static $reflectClass = array();
+    
+    protected $wireType = PhpBuf_Field_Abstract::WIRETYPE_LENGTH_DELIMITED;
+    
+    protected function readImpl(PhpBuf_IO_Reader_Interface $reader) {
+        $bytes = $this->readWireTypeData($reader);
+        $refClass = self::getReflectClass($this->extra);
+        $message = $refClass->newInstance();
+        $message->read(new PhpBuf_IO_Reader($bytes));
+        return $message;
+    }
+    protected function writeImpl(PhpBuf_IO_Writer_Interface $writer, $value) {
+        $newWriter = new PhpBuf_IO_Writer();
+        $value->write($newWriter);
+        $this->writeWireTypeData($writer, $newWriter->getData());
+    }
+    protected function checkTypeOfValueImpl($value) {
+        $refObject = self::getReflectObject($value);
+        $messageName = $refObject->getMethod('name')->invoke($value);
+        if($this->extra === $messageName){
+            return true;
+        }
+        $refClass = self::getReflectClass($this->extra);
+        return $refClass->isInstance($value);
+    }
+    
+    /**
+     * @param object $value
+     * @return ReflectionObject
+     */
+    protected static function getReflectObject($value){
+        $hash = spl_object_hash($value);
+        if(isset(self::$reflectObjectCache[$hash])){
+            return self::$reflectObjectCache[$hash];
+        }
+        return self::$reflectObjectCache[$hash] = new ReflectionObject($value);
+    }
+    /**
+     * @param string $className
+     * @return reflectionClass
+     */
+    protected static function getReflectClass($className){
+        if(isset(self::$reflectClass[$className])){
+            return self::$reflectClass[$className];
+        }
+        return self::$reflectClass[$className] = new ReflectionClass($className);
+    }
 }
-?>

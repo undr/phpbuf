@@ -5,4 +5,3 @@
  *
  */
 class PhpBuf_Base128_Exception extends Exception {}
-?>

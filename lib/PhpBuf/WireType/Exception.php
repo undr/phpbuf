@@ -5,4 +5,3 @@
  *
  */
 class PhpBuf_WireType_Exception extends Exception {}
-?>

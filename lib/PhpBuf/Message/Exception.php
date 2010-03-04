@@ -5,4 +5,3 @@
  *
  */
 class PhpBuf_Message_Exception extends Exception {}
-?>

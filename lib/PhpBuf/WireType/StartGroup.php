@@ -5,12 +5,11 @@
  *
  */
 class PhpBuf_WireType_StartGroup implements PhpBuf_WireType_Interface {
-	private function __construct() {}
-	public static function read(PhpBuf_IO_Reader_Interface $reader) {
-		throw new PhpBuf_NotImplemented_Exception("reader for PhpBuf_WireType_StartGroup not implemented");
-	}
-	public static function write(PhpBuf_IO_Writer_Interface $writer, $data) {
-		throw new PhpBuf_NotImplemented_Exception("writer for PhpBuf_WireType_StartGroup not implemented");
-	}
+    private function __construct() {}
+    public static function read(PhpBuf_IO_Reader_Interface $reader) {
+        throw new PhpBuf_NotImplemented_Exception("reader for PhpBuf_WireType_StartGroup not implemented");
+    }
+    public static function write(PhpBuf_IO_Writer_Interface $writer, $data) {
+        throw new PhpBuf_NotImplemented_Exception("writer for PhpBuf_WireType_StartGroup not implemented");
+    }
 }
-?>

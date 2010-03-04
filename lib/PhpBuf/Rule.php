@@ -5,8 +5,7 @@
  *
  */
 class PhpBuf_Rule {
-	const REQUIRED = 1;
-	const OPTIONAL = 2;
-	const REPEATED = 3;
+    const REQUIRED = 1;
+    const OPTIONAL = 2;
+    const REPEATED = 3;
 }
-?>

@@ -5,4 +5,3 @@
  *
  */
 class PhpBuf_IO_Exception extends Exception {}
-?>

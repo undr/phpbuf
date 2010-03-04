@@ -5,4 +5,3 @@
  *
  */
 class PhpBuf_ZigZag_Exception extends Exception {}
-?>

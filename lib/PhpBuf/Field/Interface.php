@@ -5,9 +5,8 @@
  *
  */
 interface PhpBuf_Field_Interface {
-	public function read(PhpBuf_IO_Reader_Interface $reader);
-	public function write(PhpBuf_IO_Writer_Interface $writer);
-	public function setValue($value);
-	public function getValue();
+    public function read(PhpBuf_IO_Reader_Interface $reader);
+    public function write(PhpBuf_IO_Writer_Interface $writer);
+    public function setValue($value);
+    public function getValue();
 }
-?>

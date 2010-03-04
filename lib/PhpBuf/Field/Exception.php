@@ -5,4 +5,3 @@
  *
  */
 class PhpBuf_Field_Exception extends Exception {}
-?>
