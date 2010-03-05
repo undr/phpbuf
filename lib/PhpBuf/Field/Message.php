@@ -6,12 +6,11 @@
  */
 class PhpBuf_Field_Message extends PhpBuf_Field_Abstract {
     protected static $reflectObjectCache = array();
-    
     protected static $reflectClass = array();
     
-    protected $wireType = PhpBuf_Field_Abstract::WIRETYPE_LENGTH_DELIMITED;
+    protected $wireType = PhpBuf_WireType::WIRETYPE_LENGTH_DELIMITED;
     
-    protected function readImpl(PhpBuf_IO_Reader_Interface $reader) {
+    protected function readImpl(PhpBuf_IO_Reader_Interface $reader, $repeatable = false) {
         $bytes = $this->readWireTypeData($reader);
         $refClass = self::getReflectClass($this->extra);
         $message = $refClass->newInstance();

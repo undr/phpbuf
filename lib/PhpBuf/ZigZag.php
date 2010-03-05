@@ -20,8 +20,8 @@ class PhpBuf_ZigZag {
         if(!is_integer($value) || $value < 0) {
             throw new PhpBuf_ZigZag_Exception("value mast be unsigned integer");
         }
-        $result = round($value/2);
-        if(abs($value % 2) == 1) {
+        $result = round($value / 2);
+        if(1 === abs($value % 2)) {
             $result = -($result);
         }
         return $result;

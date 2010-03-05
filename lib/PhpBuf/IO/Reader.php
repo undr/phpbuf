@@ -48,7 +48,7 @@ class PhpBuf_IO_Reader implements PhpBuf_IO_Reader_Interface {
     }
     
     protected function check($lenght = 1) {
-        if($this->position + $lenght > $this->lenght) {
+        if($this->lenght < ($this->position + $lenght)) {
             throw new PhpBuf_IO_Exception("end of data");
         }
     }

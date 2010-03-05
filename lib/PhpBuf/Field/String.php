@@ -5,7 +5,7 @@
  *
  */
 class PhpBuf_Field_String extends PhpBuf_Field_Abstract {
-    protected $wireType = PhpBuf_Field_Abstract::WIRETYPE_LENGTH_DELIMITED;
+    protected $wireType = PhpBuf_WireType::WIRETYPE_LENGTH_DELIMITED;
     protected function readImpl(PhpBuf_IO_Reader_Interface $reader) {
         return $this->readWireTypeData($reader);
     }

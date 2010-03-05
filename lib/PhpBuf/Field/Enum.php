@@ -5,16 +5,16 @@
  *
  */
 class PhpBuf_Field_Enum extends PhpBuf_Field_Abstract {
-    protected $wireType = PhpBuf_Field_Abstract::WIRETYPE_VARINT;
+    protected $wireType = PhpBuf_WireType::WIRETYPE_VARINT;
     protected function readImpl(PhpBuf_IO_Reader_Interface $reader) {
-        return $this->getEnumNameById($this->readWireTypeData($reader));
-        if($this->value === false) {
+        if(false === $this->value) {
             throw new PhpBuf_Field_Exception("Unknow value in enum");
         }
+        return $this->getEnumNameById($this->readWireTypeData($reader));
     }
     protected function writeImpl(PhpBuf_IO_Writer_Interface $writer, $value) {
         $value = $this->getEnumIdByName($value);
-        if($value === false) {
+        if(false === $value) {
             throw new PhpBuf_Field_Exception("Unknow value in enum");
         }
         $this->writeWireTypeData($writer, $value);
@@ -28,7 +28,7 @@ class PhpBuf_Field_Enum extends PhpBuf_Field_Abstract {
     protected function getEnumIdByName($name) {
         $enums = array_flip($this->extra);
         if(isset($enums[$name])) {
-            return  $enums[$name];
+            return $enums[$name];
         }
         return false;
     }

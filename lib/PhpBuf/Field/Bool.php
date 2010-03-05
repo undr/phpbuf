@@ -5,7 +5,7 @@
  *
  */
 class PhpBuf_Field_Bool extends PhpBuf_Field_Abstract {
-    protected $wireType = PhpBuf_Field_Abstract::WIRETYPE_VARINT;
+    protected $wireType = PhpBuf_WireType::WIRETYPE_VARINT;
     protected function readImpl(PhpBuf_IO_Reader_Interface $reader) {
         return (boolean)$this->readWireTypeData($reader);
     }

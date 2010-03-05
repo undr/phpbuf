@@ -18,24 +18,33 @@ abstract class PhpBuf_RPC_Socket_Service_Client {
     protected abstract function getServiceFullQualifiedName();
     
     public function call($methodName, PhpBuf_Message_Abstract $request, $responderClassName){
-        $tmpWriter = new PhpBuf_IO_Writer;
-        $request->write($tmpWriter);
+//        used by: http://code.google.com/p/protobuf-socket-rpc/
+//
+//        $tmpWriter = new PhpBuf_IO_Writer;
+//        $request->write($tmpWriter);
+//
+//        $writer = new PhpBuf_IO_Writer;
+//        self::writeString($writer, self::TAG_SERVICE_NAME, $this->getServiceFullQualifiedName());
+//        self::writeString($writer, self::TAG_METHOD_NAME, $methodName);
+//        self::writeString($writer, self::TAG_REQUEST, $tmpWriter->getData());
         
         $writer = new PhpBuf_IO_Writer;
-        self::writeString($writer, self::TAG_SERVICE_NAME, $this->getServiceFullQualifiedName());
-        self::writeString($writer, self::TAG_METHOD_NAME, $methodName);
-        self::writeString($writer, self::TAG_REQUEST, $tmpWriter->getData());
+        $request->write($writer);
         
         $socket = new PhpBuf_RPC_Socket($this->host, $this->port);
         $socket->write($writer->getData(), $writer->getLenght());
         $socket->shutdownWrite();
         
-        $resonse = $socket->read(1024 * 1024);
+        $response = $socket->read(1024 * 1024);
         $socket->shutdownRead();
+        $socket->close();
         
-        $reader = new PhpBuf_IO_Reader($resonse);
+        //$responseWriter = new PhpBuf_IO_Writer();
+        //$responseWriter->writeBytes($resonse);
+        //PhpBuf_IO_Reader::createFromWriter($responseWriter);
+        
         $instance = new $responderClassName;
-        $instance->read($reader);
+        $instance->read(new PhpBuf_IO_Reader($response));
         return $instance;
     }
     

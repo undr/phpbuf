@@ -5,7 +5,7 @@
  *
  */
 class PhpBuf_Field_Int extends PhpBuf_Field_Abstract {
-    protected $wireType = PhpBuf_Field_Abstract::WIRETYPE_VARINT;
+    protected $wireType = PhpBuf_WireType::WIRETYPE_VARINT;
     /**
      * Enter description here...
      *

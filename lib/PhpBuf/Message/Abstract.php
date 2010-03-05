@@ -4,7 +4,7 @@
  * @link http://github.com/undr/phpbuf
  *
  */
-abstract class PhpBuf_Message_Abstract {
+abstract class PhpBuf_Message_Abstract implements PhpBuf_Message_Interface {
     /**
      *  Fields array of message
      *
@@ -50,23 +50,13 @@ abstract class PhpBuf_Message_Abstract {
      */
     public function read(PhpBuf_IO_Reader_Interface $reader) {
         try {
-            while(true){
-                $this->readOnce($reader);
+            while($reader->getPosition() < $reader->getLength()){
+                $fieldClass = $this->readFieldFromHeader($reader);
+                $fieldClass->read($reader);
             }
         } catch(PhpBuf_IO_Exception $e){
             return ;
         }
-    }
-    
-    public function readOnce(PhpBuf_IO_Reader_Interface $reader) {
-        //
-        // Исправить надо, как пока не знаю
-        //
-        $fieldClass = $this->readFieldFromHeader($reader);
-        if($fieldClass == null){
-            return;
-        }
-        $fieldClass->read($reader);
     }
 
     /**
@@ -89,10 +79,10 @@ abstract class PhpBuf_Message_Abstract {
      * @param mixed $extra
      */
     protected function setField($name, $type, $rule, $index, $extra = '') {
-        if($type == PhpBuf_Type::MESSAGE && (!is_string($extra) || empty($extra))) {
-            throw new PhpBuf_Message_Exception('message mast have $extra');
+        if(PhpBuf_Type::MESSAGE === $type && (!is_string($extra) || empty($extra))) {
+            throw new PhpBuf_Message_Exception('message mast have $extra in file:' . $name);
         }
-        if($type == PhpBuf_Type::ENUM && (!is_array($extra) || empty($extra))) {
+        if(PhpBuf_Type::ENUM === $type && (!is_array($extra) || empty($extra))) {
             throw new PhpBuf_Message_Exception('enum mast have $extra');
         }
         $fieldClass = PhpBuf_Field_Abstract::create($type, array('index' => $index, 'rule' => $rule, 'extra' => $extra));
@@ -134,6 +124,7 @@ abstract class PhpBuf_Message_Abstract {
             throw new PhpBuf_Message_Exception("property $field not found");
         }
     }
+    
     /**
      * Read field info from reader and return associated field class
      *
@@ -142,10 +133,8 @@ abstract class PhpBuf_Message_Abstract {
      */
     protected function readFieldFromHeader(PhpBuf_IO_Reader_Interface $reader) {
         $varint = PhpBuf_Base128::decodeFromReader($reader);
-        $bigMask = bindec('111');
-        $wireType = $varint & $bigMask;
         $fieldIndex = $varint >> 3;
-        
+        $wireType = self::mask($varint);
         if(!isset($this->fields[$fieldIndex])) {
             throw new PhpBuf_Field_Exception("class " . get_class($this) . " field index $fieldIndex not found");
         }
@@ -157,5 +146,12 @@ abstract class PhpBuf_Message_Abstract {
         return $fieldClass;
     }
     
-    public abstract static function name();
+    protected static function mask($varint){
+        static $bigMask = null;
+        if(null === $bigMask){
+            // cache
+            $bigMask = bindec('111');
+        }
+        return $varint & $bigMask;
+    }
 }

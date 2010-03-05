@@ -12,6 +12,8 @@ class PhpBuf_RPC_Socket {
     
     protected $socket;
     
+    protected $closed = false;
+    
     public function __construct($host, $port){
         $ipAddr = self::DEFAULT_IPADDR;
         if(false === ip2long($host)){
@@ -22,22 +24,24 @@ class PhpBuf_RPC_Socket {
         
         $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         if(false === $socket){
-            throw new RuntimeException('socket creation fail:' . socket_strerror(socket_last_error()));
+            throw new PhpBuf_RPC_SocketException('socket creation fail:' . socket_strerror(socket_last_error()));
         }
         
         $connected = socket_connect($socket, $ipAddr, $port);
         if(false === $connected){
-            throw new RuntimeException('socket connection fail:' . socket_strerror(socket_last_error()));
+            throw new PhpBuf_RPC_SocketException('socket connection fail:' . socket_strerror(socket_last_error()));
         }
         
         socket_set_block($socket);
-        socket_set_timeout($socket, 5);
+        //socket_set_timeout($socket, 5);
         socket_set_option($socket, SOL_SOCKET, SO_REUSEADDR, 1);
         socket_set_option($socket, SOL_SOCKET, SO_LINGER, array('l_onoff' => 1, 'l_linger' => 1));
         $this->socket = $socket;
     }
     public function __destruct(){
-        @socket_close($this->socket);
+        if(!$this->closed){
+            $this->close();
+        }
     }
     
     public function read($length){
@@ -51,20 +55,25 @@ class PhpBuf_RPC_Socket {
     public function write($data, $length = null){
         $result = @socket_write($this->socket, $data, $length);
         if(false === $result){
-            throw new RuntimeException('write error');
+            throw new PhpBuf_RPC_SocketException('write error');
         }
         return $result;
     }
     
     public function shutdownRead(){
-        socket_shutdown($this->socket, self::SOCKET_READ_END);
+        return @socket_shutdown($this->socket, self::SOCKET_READ_END);
     }
     
     public function shutdownWrite(){
-        socket_shutdown($this->socket, self::SOCKET_WRITE_END);
+        return @socket_shutdown($this->socket, self::SOCKET_WRITE_END);
     }
     
     public function shutdown(){
-        socket_shutdown($this->socket, self::SOCKET_READ_WRITE_END);
+        return @socket_shutdown($this->socket, self::SOCKET_READ_WRITE_END);
+    }
+    
+    public function close(){
+        $this->closed = true;
+        @socket_close($this->socket);
     }
 }

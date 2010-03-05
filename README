@@ -66,7 +66,7 @@ $this->assertEquals("Some bytes", $message->bytes);
 
 ?>
 
-RPC call
+RPC call:
 ----
 
 package com.example.protobuf;

@@ -4,18 +4,7 @@
  * @link http://github.com/undr/phpbuf
  *
  */
-abstract class PhpBuf_Field_Abstract  implements PhpBuf_Field_Interface {
-    
-    /**
-     * Wire types
-     *
-     */
-    const WIRETYPE_VARINT = 0;
-    const WIRETYPE_FIXED64 = 1;
-    const WIRETYPE_LENGTH_DELIMITED = 2;
-    const WIRETYPE_START_GROUP = 3;
-    const WIRETYPE_END_GROUP = 4;
-    const WIRETYPE_FIXED32 = 5;
+abstract class PhpBuf_Field_Abstract implements PhpBuf_Field_Interface {
     
     /**
      * Value of field
@@ -44,35 +33,12 @@ abstract class PhpBuf_Field_Abstract  implements PhpBuf_Field_Interface {
      */
     protected $index;
     /**
-     * Wire type
+     * Wire type(PhpBuf_WireType)
      *
-     * @var index
+     * @var integer
      */
     protected $wireType;
 
-    /**
-     * Valid wire types
-     *
-     * @var array
-     */
-    protected static $wireTypes = array(
-        'Varint',
-        'Fixed64',
-        'LenghtDelimited',
-        'StartGroup',
-        'EndGroup',
-        'Fixed32'
-    );
-    
-    /**
-     * Convert wire type id to wire type class name
-     *
-     * @param integer $id
-     * @return string
-     */
-    public static function getWireTypeNameById($id) {
-        return self::$wireTypes[$id];
-    }
     /**
      * Fabric method, create classes extended from PhpBuf_Field_Abstract
      *
@@ -118,8 +84,12 @@ abstract class PhpBuf_Field_Abstract  implements PhpBuf_Field_Interface {
     public function getValue() {
         return $this->value;
     }
+
     public function getRule(){
         return $this->rule;
+    }
+    public function getExtra(){
+        return $this->extra;
     }
     /**
      * Read field from reader
@@ -182,7 +152,7 @@ abstract class PhpBuf_Field_Abstract  implements PhpBuf_Field_Interface {
      *
      * @param PhpBuf_IO_Writer_Interface $writer
      */
-    protected function writeImpl(PhpBuf_IO_Writer_Interface $writer) {
+    protected function writeImpl(PhpBuf_IO_Writer_Interface $writer, $value) {
         throw new PhpBuf_Field_Exception("you mast override function PhpBuf_Field_Abstract#writeImpl");
     }
     /**
@@ -192,7 +162,7 @@ abstract class PhpBuf_Field_Abstract  implements PhpBuf_Field_Interface {
      * @return mixed
      */
     protected function readWireTypeData(PhpBuf_IO_Reader_Interface $reader) {
-        return call_user_func_array(array('PhpBuf_WireType_' . self::getWireTypeNameById($this->wireType), 'read'), array($reader));
+        return call_user_func_array(array('PhpBuf_WireType_' . PhpBuf_WireType::getWireTypeNameById($this->wireType), 'read'), array($reader));
     }
     /**
      * Enter description here...
@@ -201,7 +171,7 @@ abstract class PhpBuf_Field_Abstract  implements PhpBuf_Field_Interface {
      * @param mixed $value
      */
     protected function writeWireTypeData(PhpBuf_IO_Writer_Interface $writer, $value) {
-        call_user_func_array(array('PhpBuf_WireType_' . self::getWireTypeNameById($this->wireType), 'write'), array($writer, $value));
+        call_user_func_array(array('PhpBuf_WireType_' . PhpBuf_WireType::getWireTypeNameById($this->wireType), 'write'), array($writer, $value));
     }
     /**
      * Enter description here...
