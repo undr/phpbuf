@@ -11,9 +11,9 @@ message Message_Example {
     required sint32 balance = 2;
     required bool isAdmin = 3;
     enum Status {
-    	active = 0;
-    	inactive = 1;
-    	deleted = 2;
+        active = 0;
+        inactive = 1;
+        deleted = 2;
     }
     required enum Status status = 4;
     required string name = 5;
@@ -69,6 +69,8 @@ $this->assertEquals("Some bytes", $message->bytes);
 RPC call:
 ----
 
+RPC call requires(implemented): http://code.google.com/p/protobuf-socket-rpc/
+
 package com.example.protobuf;
 
 message Request {
@@ -108,11 +110,10 @@ class Response_Foo extends PhpBuf_Message_Abstract {
 }
 
 class MyService extends PhpBuf_RPC_Socket_Service_Client {
-    protected function getServiceFullQualifiedName(){
-        return 'com.example.protobuf.MyService';
-    }
-    public function sayHello(Request_Hoge $request){
-        return $this->call(__FUNCTION__, $request, Response_Foo::name());
+    public function __construct($host, $port){
+        parent::__construct($host, $port);
+        $this->setServiceFullQualifiedName('com.example.protobuf.MyService');
+        $this->registerMethodResponderClass('sayHello', Response_Foo::name());
     }
 }
 
