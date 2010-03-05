@@ -1,3 +1,3 @@
 <?php
 
-class PhpBuf_RPC_SocketException extends RuntimeException {}
+class PhpBuf_RPC_Exception extends Exception {}
