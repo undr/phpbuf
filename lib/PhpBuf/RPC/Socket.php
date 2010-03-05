@@ -33,7 +33,7 @@ class PhpBuf_RPC_Socket {
         }
         
         socket_set_block($socket);
-        //socket_set_timeout($socket, 5);
+        // socket_set_timeout($socket, 5);
         socket_set_option($socket, SOL_SOCKET, SO_SNDTIMEO, array('sec' => 5, 'usec' => 0));
         socket_set_option($socket, SOL_SOCKET, SO_REUSEADDR, 1);
         socket_set_option($socket, SOL_SOCKET, SO_LINGER, array('l_onoff' => 1, 'l_linger' => 1));
