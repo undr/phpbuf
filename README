@@ -69,7 +69,7 @@ $this->assertEquals("Some bytes", $message->bytes);
 RPC call:
 ----
 
-RPC call requires(implemented): http://code.google.com/p/protobuf-socket-rpc/
+RPC call required implements: http://code.google.com/p/protobuf-socket-rpc/
 
 package com.example.protobuf;
 
