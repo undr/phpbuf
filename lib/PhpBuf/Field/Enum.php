@@ -33,6 +33,7 @@ class PhpBuf_Field_Enum extends PhpBuf_Field_Abstract {
         return false;
     }
     protected function checkTypeOfValueImpl($value) {
-        return (boolean)$this->getEnumIdByName($value);
+        $enums = array_flip($this->extra);
+        return isset($enums[$value]);
     }
 }
