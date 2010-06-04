@@ -45,7 +45,7 @@ abstract class PhpBuf_RPC_Socket_Service_Client {
             
             $resultData = '';
             do {
-                $read = $socket->read(1024 * 1024);
+                $read = $socket->read(1024);
                 if(empty($read)){
                     break;
                 }
