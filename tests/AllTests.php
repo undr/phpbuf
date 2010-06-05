@@ -2,6 +2,11 @@
 define("ROOT", dirname(dirname(__FILE__)));
 require_once 'PHPUnit/Framework.php';
 require_once(ROOT . '/lib/PhpBuf.php');
+require_once(ROOT . "/tests/Example.php");
+require_once(ROOT . "/tests/ExampleRepeat.php");
+require_once(ROOT . "/tests/Example/Test1.php");
+require_once(ROOT . "/tests/Example/Test2.php");
+require_once(ROOT . "/tests/Example/Test3.php");
 require_once ROOT . '/tests/PhpBuf/Base128Test.php';
 require_once ROOT . '/tests/PhpBuf/ZigZagTest.php';
 require_once ROOT . '/tests/PhpBuf/ReaderWriterTest.php';
