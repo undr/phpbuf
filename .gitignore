@@ -1,0 +1,7 @@
+*~
+.settings
+.svn
+.DS_Store
+build/
+dist/
+bin/
