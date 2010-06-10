@@ -46,15 +46,15 @@ require_once 'PhpBuf/Message/Exception.php';
 require_once 'PhpBuf/Message/Interface.php';
 require_once 'PhpBuf/Message/Abstract.php';
 
-require_once 'PhpBuf/Message/Enum/Interface.php';
-require_once 'PhpBuf/Message/Enum/Abstract.php';
-
 require_once 'PhpBuf/RPC/Message/ErrorReason.php';
 require_once 'PhpBuf/RPC/Message/Request.php';
 require_once 'PhpBuf/RPC/Message/Response.php';
 
+require_once 'PhpBuf/RPC/Socket/Interface.php';
 require_once 'PhpBuf/RPC/Socket/Exception.php';
 
 require_once 'PhpBuf/RPC/Exception.php';
+require_once 'PhpBuf/RPC/SocketFactory.php';
 require_once 'PhpBuf/RPC/Socket.php';
+require_once 'PhpBuf/RPC/SocketStream.php';
 require_once 'PhpBuf/RPC/SocketServiceClient.php';

@@ -1,14 +1,14 @@
 <?php
 
-class PhpBuf_RPC_Socket {
-    
-    const DEFAULT_IPADDR = '127.0.0.1';
+class PhpBuf_RPC_Socket implements PhpBuf_RPC_Socket_Interface {
     
     const SOCKET_READ_END = 0;
     
     const SOCKET_WRITE_END = 1;
     
     const SOCKET_READ_WRITE_END = 2;
+    
+    const TIMEOUT_USEC = 200000;
     
     protected $socket;
     
@@ -32,11 +32,15 @@ class PhpBuf_RPC_Socket {
             throw new PhpBuf_RPC_Socket_Exception('socket connection fail:' . socket_strerror(socket_last_error()));
         }
         
-        socket_set_block($socket);
+        socket_set_nonblock($socket);
         // socket_set_timeout($socket, 5);
         socket_set_option($socket, SOL_SOCKET, SO_SNDTIMEO, array('sec' => 5, 'usec' => 0));
-        socket_set_option($socket, SOL_SOCKET, SO_REUSEADDR, 1);
         socket_set_option($socket, SOL_SOCKET, SO_LINGER, array('l_onoff' => 1, 'l_linger' => 1));
+        socket_set_option($socket, SOL_SOCKET, SO_REUSEADDR, 1);
+        socket_set_option($socket, SOL_SOCKET, SO_KEEPALIVE, 1);
+        if(defined('TCP_NODELAY')){
+            socket_set_option($socket, SOL_SOCKET, TCP_NODELAY, 1);
+        }
         $this->socket = $socket;
     }
     public function __destruct(){
@@ -45,20 +49,48 @@ class PhpBuf_RPC_Socket {
         }
     }
     
-    public function read($length){
-        $result = socket_read($this->socket, $length, PHP_BINARY_READ);
-        if(false === $result){
-            throw new PhpBuf_RPC_Socket_Exception('read error');
+    public function read($length = 1024){
+        $data = '';
+        
+        while(true){
+            $read = array($this->socket);
+            $write = array();
+            $except = array();
+            
+            $r = socket_select($read, $write, $except, 0, self::TIMEOUT_USEC);
+            if(false === $r){
+                throw new PhpBuf_RPC_Socket_Exception('socket select fail: ' . socket_strerror(socket_last_error()));
+            }
+            if(0 === $r){
+                continue;
+            }
+            
+            $result = @socket_read($this->socket, $length, PHP_BINARY_READ);
+            if(false === $result){
+                throw new PhpBuf_RPC_Socket_Exception('read error:' . socket_strerror(socket_last_error()));
+            }
+            if(empty($result)){
+                break;
+            }
+            $data .= $result;
         }
-        return $result;
+        return $data;
     }
     
     public function write($data, $length = null){
-        $result = @socket_write($this->socket, $data, $length);
-        if(false === $result){
-            throw new PhpBuf_RPC_Socket_Exception('write error');
+        $msgLength = $length;
+        if(null === $length){
+            $msgLength = strlen($data);
         }
-        return $result;
+        $offset = 0;
+        while($offset < $msgLength){
+            $size = @socket_write($this->socket, substr($data, $offset), $msgLength - $offset);
+            if(false === $size){
+                throw new PhpBuf_RPC_Socket_Exception('write error: ' . socket_strerror(socket_last_error()));
+            }
+            $offset += $size;
+        }
+        return $offset;
     }
     
     public function shutdownRead(){
