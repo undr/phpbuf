@@ -10,7 +10,7 @@ class PhpBuf_RPC_SocketStream implements PhpBuf_RPC_Socket_Interface {
         // T.B.D
     }
     
-    public function read($length){
+    public function read($length = 1024){
         // T.B.D
     }
     
