@@ -59,7 +59,7 @@ require_once 'PhpBuf/RPC/Context.php';
 require_once 'PhpBuf/RPC/SocketStream.php';
 require_once 'PhpBuf/RPC/Socket.php';
 
-require_once 'PhpBuf/RPC/Socket/Balancer/Interface.php';
-require_once 'PhpBuf/RPC/Socket/Balancer/Random.php';
+require_once 'PhpBuf/RPC/Balancer/Interface.php';
+require_once 'PhpBuf/RPC/Balancer/Random.php';
 
-require_once 'PhpBuf/RPC/Socket/Service/Client.php';
+require_once 'PhpBuf/RPC/Service/Client.php';
