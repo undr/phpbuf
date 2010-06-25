@@ -52,8 +52,14 @@ require_once 'PhpBuf/RPC/Message/Response.php';
 
 require_once 'PhpBuf/RPC/Socket/Interface.php';
 require_once 'PhpBuf/RPC/Socket/Exception.php';
+require_once 'PhpBuf/RPC/Socket/Factory.php';
 
 require_once 'PhpBuf/RPC/Exception.php';
-require_once 'PhpBuf/RPC/SocketFactory.php';
+require_once 'PhpBuf/RPC/Context.php';
+require_once 'PhpBuf/RPC/SocketStream.php';
 require_once 'PhpBuf/RPC/Socket.php';
-require_once 'PhpBuf/RPC/SocketServiceClient.php';
+
+require_once 'PhpBuf/RPC/Socket/Balancer/Interface.php';
+require_once 'PhpBuf/RPC/Socket/Balancer/Random.php';
+
+require_once 'PhpBuf/RPC/Socket/Service/Client.php';

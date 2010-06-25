@@ -109,9 +109,9 @@ class Response_Foo extends PhpBuf_Message_Abstract {
     }
 }
 
-class MyService extends PhpBuf_RPC_Socket_Service_Client {
-    public function __construct($host, $port){
-        parent::__construct($host, $port);
+class MyService extends PhpBuf_RPC_Service_Client {
+    public function __construct(PhpBuf_RPC_Context $context){
+        parent::__construct($context);
         $this->setServiceFullQualifiedName('com.example.protobuf.MyService');
         $this->registerMethodResponderClass('sayHello', Response_Foo::name());
     }
@@ -120,7 +120,11 @@ class MyService extends PhpBuf_RPC_Socket_Service_Client {
 $request = new Request_Hoge;
 $request->value = 'hello world';
 
-$service = new MyService('127.0.0.1', 12345);
+$ctx = new PhpBuf_RPC_Context;
+$ctx->addServer('127.0.0.1', 12345);
+$ctx->addServer('127.0.0.1', 67890);
+
+$service = new MyService($ctx);
 $response = $service->sayHello($request);
 
 ?>

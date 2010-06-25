@@ -3,19 +3,32 @@
 //
 // using: http://code.google.com/p/protobuf-socket-rpc/
 //
-abstract class PhpBuf_RPC_Socket_Service_Client {
+abstract class PhpBuf_RPC_Service_Client {
     
-    protected $host;
+    /**
+     * @var PhpBuf_RPC_Balancer_Interface
+     */
+    protected $balancer;
     
-    protected $port;
-    
+    /**
+     * @var string
+     */
     protected $serviceFullQualifiedName = '';
     
+    /**
+     * @var array
+     */
     protected $registerMethodResponderClasses = array();
     
-    public function __construct($host, $port){
-        $this->host = $host;
-        $this->port = $port;
+    /**
+     * @param PhpBuf_RPC_Context $context
+     * @param PhpBuf_RPC_Socket_Factory $factory
+     */
+    public function __construct(PhpBuf_RPC_Context $context, PhpBuf_RPC_Socket_Factory $factory = null){
+        if(null === $factory){
+            $factory = new PhpBuf_RPC_Socket_Factory;
+        }
+        $this->balancer = new PhpBuf_RPC_Balancer_Random($context, $factory);
     }
     
     protected function setServiceFullQualifiedName($serviceFullQualifiedName){
@@ -39,7 +52,7 @@ abstract class PhpBuf_RPC_Socket_Service_Client {
             $writer = new PhpBuf_IO_Writer;
             $request->write($writer);
             
-            $socket = new PhpBuf_RPC_Socket($this->host, $this->port);
+            $socket = $this->balancer->get();
             $socket->write($writer->getData(), $writer->getLenght());
             $socket->shutdownWrite();
             
