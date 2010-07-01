@@ -3,10 +3,10 @@
  * Use tests in folder tests
  */
 require_once("./lib/PhpBuf.php");
-require_once("./lib/PhpBuf/Message/Example.php");
-require_once("./lib/PhpBuf/Message/ExampleRepeat.php");
-require_once("./lib/PhpBuf/Message/Example/Test1.php");
-require_once("./lib/PhpBuf/Message/Example/Test3.php");
+require_once("./tests/Example.php");
+require_once("./tests/ExampleRepeat.php");
+require_once("./tests/Example/Test1.php");
+require_once("./tests/Example/Test3.php");
 
 echo "Test values less than 128 (encode/decode)\n";
 $result = PhpBuf_Base128::decodeFromReader(new PhpBuf_IO_Reader(PhpBuf_Base128::encode(120)));

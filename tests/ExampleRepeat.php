@@ -9,5 +9,9 @@ class PhpBuf_Message_ExampleRepeat extends PhpBuf_Message_Abstract {
 		$this->setField("messages", PhpBuf_Type::MESSAGE, PhpBuf_Rule::REPEATED, 1, "PhpBuf_Message_Example");
 		$this->setField("name", PhpBuf_Type::STRING, PhpBuf_Rule::REPEATED , 2);
 	}
+	public static function name(){
+        return __CLASS__;
+    }
+
 }
 ?>

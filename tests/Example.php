@@ -13,5 +13,8 @@ class PhpBuf_Message_Example extends PhpBuf_Message_Abstract {
 		$this->setField("name", PhpBuf_Type::STRING, PhpBuf_Rule::REQUIRED, 5);
 		$this->setField("bytes", PhpBuf_Type::BYTES, PhpBuf_Rule::REQUIRED, 6);
 	}
+	public static function name(){
+        return __CLASS__;
+    }
 }
 ?>
