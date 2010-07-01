@@ -26,7 +26,23 @@ class PhpBuf_RPC_Balancer_Random implements PhpBuf_RPC_Balancer_Interface {
     public function get(){
         $copy = (array) $this->context->getServers();
         shuffle($copy);
-        $server = $copy[0];
-        return $this->factory->create($server['host'], $server['port']);
+        $count = count($copy);
+        
+        $lastException = null;
+        for($i = 0; $i < $count; ++$i){
+            $server = $copy[$i];
+            try {
+                return $this->factory->create($server['host'], $server['port']);
+            } catch(PhpBuf_RPC_Socket_Exception $e){
+                $lastException = $e;
+                //
+                // next server
+                // TODO: failover
+                //
+            }
+        }
+        if(null != $lastException){
+            throw new PhpBuf_RPC_Socket_Exception($lastException->getMessage(), $lastException->getCode());
+        }
     }
 }
