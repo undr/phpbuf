@@ -162,6 +162,12 @@ abstract class PhpBuf_Field_Abstract implements PhpBuf_Field_Interface {
      * @return mixed
      */
     protected function readWireTypeData(PhpBuf_IO_Reader_Interface $reader) {
+        //
+        // extremely low memory condition [and/or] no class loaded(using autoload): crash calling call_user_func_array
+        //
+        if(PhpBuf_WireType::WIRETYPE_LENGTH_DELIMITED === $this->wireType){
+            return PhpBuf_WireType_LenghtDelimited::read($reader);
+        }
         return call_user_func_array(array('PhpBuf_WireType_' . PhpBuf_WireType::getWireTypeNameById($this->wireType), 'read'), array($reader));
     }
     /**
@@ -171,7 +177,14 @@ abstract class PhpBuf_Field_Abstract implements PhpBuf_Field_Interface {
      * @param mixed $value
      */
     protected function writeWireTypeData(PhpBuf_IO_Writer_Interface $writer, $value) {
-        call_user_func_array(array('PhpBuf_WireType_' . PhpBuf_WireType::getWireTypeNameById($this->wireType), 'write'), array($writer, $value));
+        //
+        // extremely low memory condition [and/or] no class loaded(using autoload): crash calling call_user_func_array
+        //
+        if(PhpBuf_WireType::WIRETYPE_LENGTH_DELIMITED === $this->wireType){
+            PhpBuf_WireType_LenghtDelimited::write($writer, $value);
+        } else {
+            call_user_func_array(array('PhpBuf_WireType_' . PhpBuf_WireType::getWireTypeNameById($this->wireType), 'write'), array($writer, $value));
+        }
     }
     /**
      * Enter description here...
@@ -212,3 +225,4 @@ abstract class PhpBuf_Field_Abstract implements PhpBuf_Field_Interface {
         PhpBuf_Base128::encodeToWriter($writer, $value);
     }
 }
+
