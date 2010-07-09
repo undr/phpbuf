@@ -41,6 +41,12 @@ class PhpBuf_RPC_Socket implements PhpBuf_RPC_Socket_Interface {
         if(defined('TCP_NODELAY')){
             socket_set_option($socket, SOL_SOCKET, TCP_NODELAY, 1);
         }
+        if(!defined('SOCKET_EWOULDBLOCK')){
+            define('SOCKET_EWOULDBLOCK', 35);
+        }
+        if(!defined('SOCKET_EAGAIN')){
+            define('SOCKET_EAGAIN', 35);
+        }
         $this->socket = $socket;
     }
     public function __destruct(){
@@ -50,8 +56,8 @@ class PhpBuf_RPC_Socket implements PhpBuf_RPC_Socket_Interface {
     }
     
     public function read($length = 1024){
+        $retry = false;
         $data = '';
-        
         while(true){
             $read = array($this->socket);
             $write = array();
@@ -67,6 +73,15 @@ class PhpBuf_RPC_Socket implements PhpBuf_RPC_Socket_Interface {
             
             $result = @socket_read($this->socket, $length, PHP_BINARY_READ);
             if(false === $result){
+                if(!$retry){
+                    $error = socket_last_error();
+                    if(SOCKET_EWOULDBLOCK == $error || SOCKET_EAGAIN == $error){
+                        usleep(self::TIMEOUT_USEC);
+                        $retry = true;
+                        continue;
+                    }
+                }
+                
                 throw new PhpBuf_RPC_Socket_Exception('read error:' . socket_strerror(socket_last_error()));
             }
             if(empty($result)){
@@ -82,10 +97,20 @@ class PhpBuf_RPC_Socket implements PhpBuf_RPC_Socket_Interface {
         if(null === $length){
             $msgLength = strlen($data);
         }
+        
+        $retry = false;
         $offset = 0;
         while($offset < $msgLength){
             $size = @socket_write($this->socket, substr($data, $offset), $msgLength - $offset);
             if(false === $size){
+                if(!$retry){
+                    $error = socket_last_error();
+                    if(SOCKET_EWOULDBLOCK == $error || SOCKET_EAGAIN == $error){
+                        usleep(self::TIMEOUT_USEC);
+                        $retry = true;
+                        continue;
+                    }
+                }
                 throw new PhpBuf_RPC_Socket_Exception('write error: ' . socket_strerror(socket_last_error()));
             }
             $offset += $size;
@@ -110,3 +135,4 @@ class PhpBuf_RPC_Socket implements PhpBuf_RPC_Socket_Interface {
         @socket_close($this->socket);
     }
 }
+
