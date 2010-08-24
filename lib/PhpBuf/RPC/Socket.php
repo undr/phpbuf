@@ -10,6 +10,8 @@ class PhpBuf_RPC_Socket implements PhpBuf_RPC_Socket_Interface {
     
     const TIMEOUT_USEC = 200000;
     
+    const RETRY_THESHOLD = 1000;
+    
     // SOCKET_EWOULDBLOCK || SOCKET_EAGAIN ::=> "Resource temporarily unavailable"
     protected static $errorAgain = array(
         11,
@@ -62,7 +64,7 @@ class PhpBuf_RPC_Socket implements PhpBuf_RPC_Socket_Interface {
     }
     
     public function read($length = 1024){
-        $retry = false;
+        $retry = 0;
         $data = '';
         while(true){
             $read = array($this->socket);
@@ -79,15 +81,14 @@ class PhpBuf_RPC_Socket implements PhpBuf_RPC_Socket_Interface {
             
             $result = @socket_read($this->socket, $length, PHP_BINARY_READ);
             if(false === $result){
-                if(!$retry){
+                if($retry < self::RETRY_THESHOLD){
                     $error = socket_last_error();
                     if(in_array($error, self::$errorAgain)){
                         usleep(self::TIMEOUT_USEC);
-                        $retry = true;
+                        $retry++;
                         continue;
                     }
                 }
-                
                 throw new PhpBuf_RPC_Socket_Exception('read error:' . socket_strerror(socket_last_error()));
             }
             if(empty($result)){
@@ -104,16 +105,16 @@ class PhpBuf_RPC_Socket implements PhpBuf_RPC_Socket_Interface {
             $msgLength = strlen($data);
         }
         
-        $retry = false;
+        $retry = 0;
         $offset = 0;
         while($offset < $msgLength){
             $size = @socket_write($this->socket, substr($data, $offset), $msgLength - $offset);
             if(false === $size){
-                if(!$retry){
+                if($retry < self::RETRY_THESHOLD){
                     $error = socket_last_error();
                     if(in_array($error, self::$errorAgain)){
                         usleep(self::TIMEOUT_USEC);
-                        $retry = true;
+                        $retry++;
                         continue;
                     }
                 }
