@@ -10,6 +10,12 @@ class PhpBuf_RPC_Socket implements PhpBuf_RPC_Socket_Interface {
     
     const TIMEOUT_USEC = 200000;
     
+    // SOCKET_EWOULDBLOCK || SOCKET_EAGAIN ::=> "Resource temporarily unavailable"
+    protected static $errorAgain = array(
+        11,
+        35
+    );
+    
     protected $socket;
     
     protected $closed = false;
@@ -75,7 +81,7 @@ class PhpBuf_RPC_Socket implements PhpBuf_RPC_Socket_Interface {
             if(false === $result){
                 if(!$retry){
                     $error = socket_last_error();
-                    if(SOCKET_EWOULDBLOCK == $error || SOCKET_EAGAIN == $error){
+                    if(in_array($error, self::$errorAgain)){
                         usleep(self::TIMEOUT_USEC);
                         $retry = true;
                         continue;
@@ -105,7 +111,7 @@ class PhpBuf_RPC_Socket implements PhpBuf_RPC_Socket_Interface {
             if(false === $size){
                 if(!$retry){
                     $error = socket_last_error();
-                    if(SOCKET_EWOULDBLOCK == $error || SOCKET_EAGAIN == $error){
+                    if(in_array($error, self::$errorAgain)){
                         usleep(self::TIMEOUT_USEC);
                         $retry = true;
                         continue;
@@ -135,4 +141,3 @@ class PhpBuf_RPC_Socket implements PhpBuf_RPC_Socket_Interface {
         @socket_close($this->socket);
     }
 }
-
