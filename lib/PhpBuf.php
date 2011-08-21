@@ -33,6 +33,7 @@ require_once 'PhpBuf/WireType/Fixed64.php';
 require_once 'PhpBuf/Type.php';
 require_once 'PhpBuf/Field/Interface.php';
 require_once 'PhpBuf/Field/Exception.php';
+require_once 'PhpBuf/Field/NotFoundException.php';
 require_once 'PhpBuf/Field/Abstract.php';
 require_once 'PhpBuf/Field/SInt.php';
 require_once 'PhpBuf/Field/Int.php';

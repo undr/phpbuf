@@ -47,13 +47,15 @@ abstract class PhpBuf_Message_Abstract implements PhpBuf_Message_Interface {
      * Read message from reader
      *
      * @param IO_Reader_Interface $reader
+     * @param boolean $strict
      */
-    public function read(PhpBuf_IO_Reader_Interface $reader) {
+    public function read(PhpBuf_IO_Reader_Interface $reader, $strict = true) {
         try {
-            while($reader->getPosition() < $reader->getLength()){
-                $fieldClass = $this->readFieldFromHeader($reader);
-                $fieldClass->read($reader);
-            }
+            if($strict){
+                $this->strictRead($reader);
+            } else {
+                $this->laxRead($reader);
+            } 
         } catch(PhpBuf_IO_Exception $e){
             return ;
         }
@@ -124,7 +126,30 @@ abstract class PhpBuf_Message_Abstract implements PhpBuf_Message_Interface {
             throw new PhpBuf_Message_Exception("property $field not found");
         }
     }
-    
+    /**
+     * Read only the correct message 
+     *
+     * @param IO_Reader_Interface $reader
+     */ 
+    protected function strictRead(PhpBuf_IO_Reader_Interface $reader) {
+        while($reader->getPosition() < $reader->getLength()){
+            $fieldClass = $this->readFieldFromHeader($reader);
+            $fieldClass->read($reader);
+        }
+    }
+    /**
+     * Read the message in disregard of unknown fields
+     *
+     * @param IO_Reader_Interface $reader
+     */ 
+    protected function laxRead(PhpBuf_IO_Reader_Interface $reader) {
+        while($reader->getPosition() < $reader->getLength()){
+            try {
+                $fieldClass = $this->readFieldFromHeader($reader);
+                $fieldClass->read($reader);
+            } catch(PhpBuf_Field_NotFoundException $e){ }
+        }
+    }
     /**
      * Read field info from reader and return associated field class
      *
@@ -136,7 +161,7 @@ abstract class PhpBuf_Message_Abstract implements PhpBuf_Message_Interface {
         $fieldIndex = $varint >> 3;
         $wireType = self::mask($varint);
         if(!isset($this->fields[$fieldIndex])) {
-            throw new PhpBuf_Field_Exception("class " . get_class($this) . " field index $fieldIndex not found");
+            throw new PhpBuf_Field_NotFoundException("class " . get_class($this) . " field index $fieldIndex not found");
         }
         $fieldClass = $this->fields[$fieldIndex];
         $fieldsWireType = $fieldClass->getWireType();
